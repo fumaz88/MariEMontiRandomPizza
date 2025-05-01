@@ -22,8 +22,8 @@ namespace MariEMontiRandomPizza
         public MenuWindow(List<Pizza> pizzaMenu)
         {
             this.Title = "Menu Completo - Mare e Monti";
-            this.Width = 700;
-            this.Height = 600;
+            this.Width = 1400;
+            this.Height = 800;
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             this.Background = new SolidColorBrush(Colors.White);
             this.ResizeMode = ResizeMode.CanMinimize;
@@ -72,74 +72,68 @@ namespace MariEMontiRandomPizza
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
-            // Group pizzas by price for better organization
-           // var pizzasByPrice = pizzaMenu.GroupBy(p => p.Price).OrderBy(g => g.Key);
 
-
-            //foreach (var priceGroup in pizzasByPrice)
-            //{
-                foreach (var pizza in pizzaMenu.OrderBy(p => p.Name))
+            foreach (var pizza in pizzaMenu.OrderBy(p => p.Name))
+            {
+                // Create a border for each pizza
+                Border pizzaBorder = new Border
                 {
-                    // Create a border for each pizza
-                    Border pizzaBorder = new Border
-                    {
-                        BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
-                        BorderThickness = new Thickness(1),
-                        CornerRadius = new CornerRadius(5),
-                        Margin = new Thickness(5),
-                        Padding = new Thickness(8),
-                        Width = 200,
-                        Background = new SolidColorBrush(Colors.White)
-                    };
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(5),
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(8),
+                    Width = 200,
+                    Background = new SolidColorBrush(Colors.White)
+                };
 
-                    // Create a stack panel for pizza details
-                    StackPanel pizzaDetails = new StackPanel
-                    {
-                        Orientation = Orientation.Vertical
-                    };
+                // Create a stack panel for pizza details
+                StackPanel pizzaDetails = new StackPanel
+                {
+                    Orientation = Orientation.Vertical
+                };
 
-                    // Pizza name
-                    TextBlock nameText = new TextBlock
-                    {
-                        Text = pizza.Name,
-                        FontWeight = FontWeights.Bold,
-                        TextWrapping = TextWrapping.Wrap,
-                        Margin = new Thickness(0, 0, 0, 5),
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    };
+                // Pizza name
+                TextBlock nameText = new TextBlock
+                {
+                    Text = pizza.Name,
+                    FontWeight = FontWeights.Bold,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
 
-                    // Pizza ingredients
-                    TextBlock ingredientsText = new TextBlock
-                    {
-                        Text = pizza.Ingredients,
-                        FontSize = 12,
-                        TextWrapping = TextWrapping.Wrap,
-                        Margin = new Thickness(0, 0, 0, 5),
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        TextAlignment = TextAlignment.Center
-                    };
+                // Pizza ingredients
+                TextBlock ingredientsText = new TextBlock
+                {
+                    Text = pizza.Ingredients,
+                    FontSize = 12,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TextAlignment = TextAlignment.Center
+                };
 
-                    // Pizza price
-                    TextBlock priceText = new TextBlock
-                    {
-                        Text = $"€ {pizza.Price:F2}",
-                        FontWeight = FontWeights.Bold,
-                        Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    };
+                // Pizza price
+                TextBlock priceText = new TextBlock
+                {
+                    Text = $"€ {pizza.Price:F2}",
+                    FontWeight = FontWeights.Bold,
+                    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
 
-                    // Add elements to the stack panel
-                    pizzaDetails.Children.Add(nameText);
-                    pizzaDetails.Children.Add(ingredientsText);
-                    pizzaDetails.Children.Add(priceText);
+                // Add elements to the stack panel
+                pizzaDetails.Children.Add(nameText);
+                pizzaDetails.Children.Add(ingredientsText);
+                pizzaDetails.Children.Add(priceText);
 
-                    // Add stack panel to the border
-                    pizzaBorder.Child = pizzaDetails;
+                // Add stack panel to the border
+                pizzaBorder.Child = pizzaDetails;
 
-                    // Add border to the wrap panel
-                    pizzaPanel.Children.Add(pizzaBorder);
-                }
-            //}
+                // Add border to the wrap panel
+                pizzaPanel.Children.Add(pizzaBorder);
+            }
 
             // Add wrap panel to the scroll viewer
             scrollViewer.Content = pizzaPanel;
