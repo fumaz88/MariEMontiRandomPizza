@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -84,25 +85,6 @@ namespace MariEMontiRandomPizza
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Content
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) }); // Footer
 
-            //// Create header with logo
-            //StackPanel headerPanel = new StackPanel
-            //{
-            //    Orientation = Orientation.Horizontal,
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    VerticalAlignment = VerticalAlignment.Center
-            //};
-
-            //// Create logo text
-            //TextBlock logoText = new TextBlock
-            //{
-            //    Text = "MARE E MONTI",
-            //    FontSize = 48,
-            //    FontWeight = FontWeights.Bold,
-            //    Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blue color similar to the logo
-            //    Margin = new Thickness(10),
-            //    VerticalAlignment = VerticalAlignment.Center
-            //};
-
 
             // Create logo tagline
             TextBlock logoTagline = new TextBlock
@@ -124,27 +106,6 @@ namespace MariEMontiRandomPizza
                 Margin = new Thickness(5)
             };
 
-            // Create a border for the logo
-            //Border logoBorder = new Border
-            //{
-            //    BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
-            //    BorderThickness = new Thickness(2),
-            //    CornerRadius = new CornerRadius(5),
-            //    Padding = new Thickness(15),
-            //    Margin = new Thickness(10),
-            //    Child = new StackPanel
-            //    {
-            //        Orientation = Orientation.Vertical,
-            //        HorizontalAlignment = HorizontalAlignment.Center,
-            //        Children = { logoText, logoTagline, fishDecoration }
-            //    }
-            //};
-
-            //headerPanel.Children.Add(logoBorder);
-
-            //// Set the header in the grid
-            //Grid.SetRow(headerPanel, 0);
-            //mainGrid.Children.Add(headerPanel);
 
             // Create content area
             Grid contentGrid = new Grid();
@@ -396,6 +357,7 @@ namespace MariEMontiRandomPizza
             if (slotMachineCounter >= SLOT_MACHINE_ITERATIONS)
             {
                 slotMachineTimer.Stop();
+                PlayWinSound();
                 slotMachineCounter = 0;
 
                 // Resetta l'intervallo per la prossima volta
@@ -738,16 +700,16 @@ namespace MariEMontiRandomPizza
             //contactInfo.Children.Add(phoneNumber);
 
             // Informazioni aggiuntive
-            TextBlock additionalInfo = new TextBlock
-            {
-                Text = "Pizza con farina integrale\n" +
-                       "Vendita vino sfuso D.O.P. € 2,20/litro",
-                FontSize = 12,
-                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-                HorizontalAlignment = HorizontalAlignment.Center,
-                TextAlignment = TextAlignment.Center,
-                LineHeight = 18
-            };
+            //TextBlock additionalInfo = new TextBlock
+            //{
+            //    Text = "Pizza con farina integrale\n" +
+            //           "Vendita vino sfuso D.O.P. € 2,20/litro",
+            //    FontSize = 12,
+            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    TextAlignment = TextAlignment.Center,
+            //    LineHeight = 18
+            //};
             //contactInfo.Children.Add(additionalInfo);
 
             //contactBorder.Child = contactInfo;
@@ -756,6 +718,19 @@ namespace MariEMontiRandomPizza
 
             Grid.SetRow(headerGrid, 0);
             mainGrid.Children.Add(headerGrid);
+        }
+
+        private void PlayWinSound()
+        {
+            try
+            {
+                var player = new SoundPlayer("Resources/game_win_success.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Errore durante la riproduzione del suono: {ex.Message}");
+            }
         }
     }
 }

@@ -15,6 +15,9 @@
 
   <ItemGroup>
     <Resource Include="Images\MariEmontiIcon.ico" />
+    <Content Include="Resources\game_win_success.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\*.png" />
   </ItemGroup>
 
