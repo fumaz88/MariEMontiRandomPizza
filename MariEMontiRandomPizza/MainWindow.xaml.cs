@@ -525,11 +525,12 @@ namespace MariEMontiRandomPizza
         {
             // Pannello principale per l'header
             Grid headerGrid = new Grid();
-            headerGrid.Margin = new Thickness(10);
+            headerGrid.Margin = new Thickness(5);
 
             // Definiamo due colonne: una per il logo e una per le informazioni di contatto
             headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
-            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            //headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
 
             // Creiamo il bordo per il logo Mare e Monti (parte sinistra)
             Border logoBorder = new Border
@@ -567,6 +568,7 @@ namespace MariEMontiRandomPizza
                 VerticalAlignment = VerticalAlignment.Center
             };
             logoTextPanel.Children.Add(mareMontiText);
+
 
             // Creiamo l'icona del pesce usando Shapes
             Canvas fishIcon = new Canvas
@@ -618,21 +620,27 @@ namespace MariEMontiRandomPizza
             };
             logoContent.Children.Add(pizzeriaText);
 
-            // Aggiungiamo l'icona del sole in rosso come nell'immagine
+            // Pannello orizzontale con sole + telefono
+            StackPanel sunAndPhonePanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+
+            // Sole
             Canvas sunIcon = new Canvas
             {
                 Width = 30,
                 Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(20, 10, 0, 10)
+                Margin = new Thickness(0, 0, 10, 0) // Spazio tra sole e telefono
             };
 
-            // Cerchio del sole
             Ellipse sunCircle = new Ellipse
             {
                 Width = 20,
                 Height = 20,
-                Fill = new SolidColorBrush(Color.FromRgb(255, 60, 50)), // Rosso come nell'immagine
+                Fill = new SolidColorBrush(Color.FromRgb(255, 60, 50)),
             };
             Canvas.SetLeft(sunCircle, 5);
             Canvas.SetTop(sunCircle, 5);
@@ -647,73 +655,87 @@ namespace MariEMontiRandomPizza
                     Y1 = 15,
                     X2 = 15 + 12 * Math.Cos(i * Math.PI / 4),
                     Y2 = 15 + 12 * Math.Sin(i * Math.PI / 4),
-                    Stroke = new SolidColorBrush(Color.FromRgb(255, 60, 50)), // Rosso come nell'immagine
+                    Stroke = new SolidColorBrush(Color.FromRgb(255, 60, 50)),
                     StrokeThickness = 2
                 };
                 sunIcon.Children.Add(ray);
             }
+            sunAndPhonePanel.Children.Add(sunIcon);
 
-            logoContent.Children.Add(sunIcon);
-            logoBorder.Child = logoContent;
-
-            Grid.SetColumn(logoBorder, 0);
-            headerGrid.Children.Add(logoBorder);
-
-            // Informazioni di contatto (parte destra)
-            Border contactBorder = new Border
-            {
-                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel testo del telefono
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(5),
-                Padding = new Thickness(10),
-                Margin = new Thickness(5)
-            };
-
-            StackPanel contactInfo = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            // Titolo BAR - TABACCHI
-            TextBlock barTabacchi = new TextBlock
-            {
-                Text = "BAR - TABACCHI",
-                FontSize = 16,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-            contactInfo.Children.Add(barTabacchi);
-
-            // Informazioni promozione
-            TextBlock promoInfo = new TextBlock
-            {
-                Text = "Ogni pizza acquistata vale 1 punto.\n" +
-                       "Ogni 10 punti una pizza margherita\n" +
-                       "(promazione valida da mercoledì a venerdì)",
-                FontSize = 12,
-                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-                HorizontalAlignment = HorizontalAlignment.Center,
-                TextAlignment = TextAlignment.Center,
-                LineHeight = 18,
-                Margin = new Thickness(0, 10, 0, 0) // Sposta in basso di 10 pixel
-            };
-            contactInfo.Children.Add(promoInfo);
-
-            // Numero di telefono evidenziato
+            // Numero di telefono a destra del sole
             TextBlock phoneNumber = new TextBlock
             {
                 Text = "Tel. 035 904800",
                 FontSize = 20,
                 FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 10)
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)),
+                VerticalAlignment = VerticalAlignment.Center
             };
-            contactInfo.Children.Add(phoneNumber);
+            sunAndPhonePanel.Children.Add(phoneNumber);
+
+            // Aggiungiamo tutto al contenuto principale del logo
+            logoContent.Children.Add(sunAndPhonePanel);
+            logoBorder.Child = logoContent;
+
+
+            Grid.SetColumn(logoBorder, 0);
+            headerGrid.Children.Add(logoBorder);
+
+            // Informazioni di contatto (parte destra)
+            //Border contactBorder = new Border
+            //{
+            //    BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel testo del telefono
+            //    BorderThickness = new Thickness(2),
+            //    CornerRadius = new CornerRadius(5),
+            //    Padding = new Thickness(10),
+            //    Margin = new Thickness(5)
+            //};
+
+            //StackPanel contactInfo = new StackPanel
+            //{
+            //    Orientation = Orientation.Vertical,
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    VerticalAlignment = VerticalAlignment.Center
+            //};
+
+            //// Titolo BAR - TABACCHI
+            //TextBlock barTabacchi = new TextBlock
+            //{
+            //    Text = "BAR - TABACCHI",
+            //    FontSize = 16,
+            //    FontWeight = FontWeights.Bold,
+            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    Margin = new Thickness(0, 0, 0, 10)
+            //};
+            //contactInfo.Children.Add(barTabacchi);
+
+            //// Informazioni promozione
+            //TextBlock promoInfo = new TextBlock
+            //{
+            //    Text = "Ogni pizza acquistata vale 1 punto.\n" +
+            //           "Ogni 10 punti una pizza margherita\n" +
+            //           "(promazione valida da mercoledì a venerdì)",
+            //    FontSize = 12,
+            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    TextAlignment = TextAlignment.Center,
+            //    LineHeight = 18,
+            //    Margin = new Thickness(0, 10, 0, 0) // Sposta in basso di 10 pixel
+            //};
+            ////contactInfo.Children.Add(promoInfo);
+
+            //// Numero di telefono evidenziato
+            //TextBlock phoneNumber = new TextBlock
+            //{
+            //    Text = "Tel. 035 904800",
+            //    FontSize = 20,
+            //    FontWeight = FontWeights.Bold,
+            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    Margin = new Thickness(0, 10, 0, 10)
+            //};
+            //contactInfo.Children.Add(phoneNumber);
 
             // Informazioni aggiuntive
             TextBlock additionalInfo = new TextBlock
@@ -726,11 +748,11 @@ namespace MariEMontiRandomPizza
                 TextAlignment = TextAlignment.Center,
                 LineHeight = 18
             };
-            contactInfo.Children.Add(additionalInfo);
+            //contactInfo.Children.Add(additionalInfo);
 
-            contactBorder.Child = contactInfo;
-            Grid.SetColumn(contactBorder, 1);
-            headerGrid.Children.Add(contactBorder);
+            //contactBorder.Child = contactInfo;
+            //Grid.SetColumn(contactBorder, 1);
+            //headerGrid.Children.Add(contactBorder);
 
             Grid.SetRow(headerGrid, 0);
             mainGrid.Children.Add(headerGrid);
