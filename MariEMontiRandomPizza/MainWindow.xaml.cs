@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace MariEMontiRandomPizza
 {
@@ -18,12 +19,17 @@ namespace MariEMontiRandomPizza
         private List<Pizza> pizzaMenu = new List<Pizza>();
         private Random random = new Random();
         private Pizza selectedPizza = null;
+        private DispatcherTimer slotMachineTimer;
+        private int slotMachineCounter = 0;
+        private const int SLOT_MACHINE_ITERATIONS = 20; // Numero di iterazioni dello slot machine
+        private const int CHARACTER_REVEAL_DELAY_MS = 50; // Ritardo tra la rivelazione di ogni carattere
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeGUI();
             LoadPizzaMenu();
+            InitializeSlotMachineTimer();
         }
 
         private void LoadPizzaMenu()
@@ -311,61 +317,195 @@ namespace MariEMontiRandomPizza
         // Event handler for random button click
         private void RandomButton_Click(object sender, RoutedEventArgs e)
         {
+            // Disabilita il bottone durante l'animazione
+            Button button = (Button)sender;
+            button.IsEnabled = false;
+
             // Select a random pizza
             int randomIndex = random.Next(pizzaMenu.Count);
             selectedPizza = pizzaMenu[randomIndex];
 
-            // Update the UI with the selected pizza
+            // Avvia l'animazione dello slot machine
+            slotMachineCounter = 0;
+            slotMachineTimer.Start();
+
+            // Aggiunge un effetto di lampeggiamento al bordo del risultato
+            Border resultBorder = VisualTreeHelper.GetParent((DependencyObject)FindName("PizzaNameText")) as Border;
+            if (resultBorder != null && resultBorder.Parent is StackPanel panel)
+            {
+                Border outerBorder = panel.Parent as Border;
+                if (outerBorder != null)
+                {
+                    ColorAnimation borderAnimation = new ColorAnimation
+                    {
+                        From = Color.FromRgb(220, 50, 50),
+                        To = Color.FromRgb(0, 102, 204),
+                        Duration = TimeSpan.FromMilliseconds(500),
+                        AutoReverse = true,
+                        RepeatBehavior = new RepeatBehavior(4)
+                    };
+
+                    SolidColorBrush borderBrush = new SolidColorBrush();
+                    outerBorder.BorderBrush = borderBrush;
+                    borderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnimation);
+                }
+            }
+
+            // Riabilita il bottone dopo un breve ritardo
+            DispatcherTimer enableButtonTimer = new DispatcherTimer();
+            enableButtonTimer.Interval = TimeSpan.FromSeconds(4);
+            enableButtonTimer.Tick += (s, args) =>
+            {
+                button.IsEnabled = true;
+                enableButtonTimer.Stop();
+            };
+            enableButtonTimer.Start();
+        }
+
+        private void InitializeSlotMachineTimer()
+        {
+            slotMachineTimer = new DispatcherTimer();
+            slotMachineTimer.Interval = TimeSpan.FromMilliseconds(80); // Velocità di cambio delle pizze
+            slotMachineTimer.Tick += SlotMachineTimer_Tick;
+        }
+
+        private void SlotMachineTimer_Tick(object sender, EventArgs e)
+        {
             TextBlock pizzaNameText = (TextBlock)this.FindName("PizzaNameText");
             TextBlock pizzaIngredientsText = (TextBlock)this.FindName("PizzaIngredientsText");
             TextBlock pizzaPriceText = (TextBlock)this.FindName("PizzaPriceText");
 
-            // Adjust font size for long pizza names
-            if (selectedPizza.Name.Length > 25)
+            // Selezione casuale durante l'animazione
+            int randomIndex = random.Next(pizzaMenu.Count);
+            Pizza randomPizza = pizzaMenu[randomIndex];
+
+            // Aggiorna i testi con la pizza casuale
+            pizzaNameText.Text = randomPizza.Name;
+
+            // Rallenteam l'animazione verso la fine
+            if (slotMachineCounter > SLOT_MACHINE_ITERATIONS * 0.7)
             {
-                pizzaNameText.FontSize = 20;
+                slotMachineTimer.Interval = TimeSpan.FromMilliseconds(slotMachineTimer.Interval.TotalMilliseconds + 15);
             }
-            else if (selectedPizza.Name.Length > 15)
+
+            // Verifica se terminiamo l'animazione dello slot machine
+            if (slotMachineCounter >= SLOT_MACHINE_ITERATIONS)
             {
-                pizzaNameText.FontSize = 22;
+                slotMachineTimer.Stop();
+                slotMachineCounter = 0;
+
+                // Resetta l'intervallo per la prossima volta
+                slotMachineTimer.Interval = TimeSpan.FromMilliseconds(80);
+
+                // Esegui la dissolvenza con rivelazione carattere per carattere
+                RevealTextCharByChar();
             }
             else
             {
-                pizzaNameText.FontSize = 24;
+                // Incrementa contatore per slot machine
+                slotMachineCounter++;
+
+                // Aggiungi effetto di rotazione
+                DoubleAnimation rotateAnimation = new DoubleAnimation
+                {
+                    From = -2,
+                    To = 2,
+                    Duration = TimeSpan.FromMilliseconds(100),
+                    AutoReverse = true
+                };
+
+                RotateTransform rotateTransform = new RotateTransform();
+                pizzaNameText.RenderTransform = rotateTransform;
+                rotateTransform.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
+            }
+        }
+
+        private async void RevealTextCharByChar()
+        {
+            TextBlock pizzaNameText = (TextBlock)this.FindName("PizzaNameText");
+            TextBlock pizzaIngredientsText = (TextBlock)this.FindName("PizzaIngredientsText");
+            TextBlock pizzaPriceText = (TextBlock)this.FindName("PizzaPriceText");
+
+            string fullPizzaName = selectedPizza.Name;
+            string fullIngredients = selectedPizza.Ingredients;
+            string fullPrice = $"€ {selectedPizza.Price:F2}";
+
+            // Nascondi tutto il testo all'inizio
+            pizzaNameText.Text = "";
+            pizzaIngredientsText.Text = "";
+            pizzaPriceText.Text = "";
+
+            // Applica un effetto di tremolio prima della rivelazione
+            ApplyShakeEffect(pizzaNameText);
+
+            // Rivela il nome della pizza carattere per carattere con un effetto di tremolio
+            for (int i = 0; i < fullPizzaName.Length; i++)
+            {
+                pizzaNameText.Text = fullPizzaName.Substring(0, i + 1);
+                await Task.Delay(CHARACTER_REVEAL_DELAY_MS);
             }
 
-            // Create animations for text update
-            DoubleAnimation fadeOut = new DoubleAnimation
-            {
-                From = 1.0,
-                To = 0.0,
-                Duration = TimeSpan.FromMilliseconds(300)
-            };
+            // Applica un effetto highlight al nome completo
+            ApplyHighlightEffect(pizzaNameText);
 
-            DoubleAnimation fadeIn = new DoubleAnimation
+            // Rivela gli ingredienti con una dissolvenza
+            await Task.Delay(200);
+            DoubleAnimation fadeInIngredients = new DoubleAnimation
             {
                 From = 0.0,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(500)
+            };
+            pizzaIngredientsText.Text = fullIngredients;
+            pizzaIngredientsText.Opacity = 0;
+            pizzaIngredientsText.BeginAnimation(UIElement.OpacityProperty, fadeInIngredients);
+
+            // Rivela il prezzo con un'animazione di crescita
+            await Task.Delay(300);
+            DoubleAnimation scaleUpPrice = new DoubleAnimation
+            {
+                From = 0.5,
                 To = 1.0,
                 Duration = TimeSpan.FromMilliseconds(300)
             };
 
-            fadeOut.Completed += (s, args) =>
-            {
-                // Update text content
-                pizzaNameText.Text = selectedPizza.Name;
-                pizzaIngredientsText.Text = selectedPizza.Ingredients;
-                pizzaPriceText.Text = $"€ {selectedPizza.Price:F2}";
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+            pizzaPriceText.RenderTransform = scaleTransform;
+            pizzaPriceText.Text = fullPrice;
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleUpPrice);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleUpPrice);
+        }
 
-                // Start fade in animation
-                pizzaNameText.BeginAnimation(UIElement.OpacityProperty, fadeIn);
-                pizzaIngredientsText.BeginAnimation(UIElement.OpacityProperty, fadeIn);
-                pizzaPriceText.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+        private void ApplyShakeEffect(TextBlock textBlock)
+        {
+            // Crea un'animazione di tremolio
+            DoubleAnimation shakeAnimation = new DoubleAnimation
+            {
+                From = -3,
+                To = 3,
+                Duration = TimeSpan.FromMilliseconds(50),
+                AutoReverse = true,
+                RepeatBehavior = new RepeatBehavior(5)
             };
 
-            // Start fade out animation
-            pizzaNameText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
-            pizzaIngredientsText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
-            pizzaPriceText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+            TranslateTransform translateTransform = new TranslateTransform();
+            textBlock.RenderTransform = translateTransform;
+            translateTransform.BeginAnimation(TranslateTransform.XProperty, shakeAnimation);
+        }
+
+        private void ApplyHighlightEffect(TextBlock textBlock)
+        {
+            // Crea un'animazione di evidenziazione
+            ColorAnimation highlightAnimation = new ColorAnimation
+            {
+                From = Colors.Red,
+                To = Colors.Black,
+                Duration = TimeSpan.FromMilliseconds(500)
+            };
+
+            SolidColorBrush textBrush = new SolidColorBrush(Colors.Black);
+            textBlock.Foreground = textBrush;
+            textBrush.BeginAnimation(SolidColorBrush.ColorProperty, highlightAnimation);
         }
 
         // Event handler for menu button click
