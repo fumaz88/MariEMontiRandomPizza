@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Resource Include="Images\MariEmontiIcon.ico" />
+    <Resource Include="Resources\*.png" />
   </ItemGroup>
 
 </Project>
