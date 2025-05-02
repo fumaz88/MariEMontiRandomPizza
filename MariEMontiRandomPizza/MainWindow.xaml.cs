@@ -39,7 +39,7 @@ namespace MariEMontiRandomPizza
                 // Aggiornare l'interfaccia utente con il menu caricato
                 //AggiornaInterfacciaMenu();
 
-                MessageBox.Show($"Menu caricato con successo! {pizzaMenu.Count} pizze trovate.", "Caricamento completato", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show($"Menu caricato con successo! {pizzaMenu.Count} pizze trovate.", "Caricamento completato", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -52,6 +52,16 @@ namespace MariEMontiRandomPizza
             this.Width = 800;
             this.Height = 600;
             this.Title = "Mare e Monti - Pizzeria d'Asporto";
+
+            try
+            {
+                this.Icon = new BitmapImage(new Uri("pack://application:,,,/Images/MariEMontiIcon.ico"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Impossibile caricare l'icona: " + ex.Message);
+            }
+
             this.Background = new SolidColorBrush(Colors.White);
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             this.ResizeMode = ResizeMode.CanMinimize;

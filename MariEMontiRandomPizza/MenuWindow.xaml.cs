@@ -24,6 +24,16 @@ namespace MariEMontiRandomPizza
             this.Title = "Menu Completo - Mare e Monti";
             this.Width = 1400;
             this.Height = 800;
+
+            try
+            {
+                this.Icon = new BitmapImage(new Uri("pack://application:,,,/Images/MariEMontiIcon.ico"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Impossibile caricare l'icona: " + ex.Message);
+            }
+
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             this.Background = new SolidColorBrush(Colors.White);
             this.ResizeMode = ResizeMode.CanMinimize;
