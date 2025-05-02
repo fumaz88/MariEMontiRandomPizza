@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace MariEMontiRandomPizza
@@ -37,7 +38,7 @@ namespace MariEMontiRandomPizza
             try
             {
                 // Percorso del file CSV (nella cartella dell'applicazione)
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "menu-pizze.csv");
+                string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "menu-pizze.csv");
 
                 // Caricare le pizze dal file CSV
                 pizzaMenu = PizzaMenuLoader.LoadPizzasFromCsv(filePath);
@@ -55,8 +56,8 @@ namespace MariEMontiRandomPizza
 
         private void InitializeGUI()
         {
-            this.Width = 800;
-            this.Height = 600;
+            this.Width = 900;
+            this.Height = 700;
             this.Title = "Mare e Monti - Pizzeria d'Asporto";
 
             try
@@ -83,24 +84,25 @@ namespace MariEMontiRandomPizza
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Content
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) }); // Footer
 
-            // Create header with logo
-            StackPanel headerPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            //// Create header with logo
+            //StackPanel headerPanel = new StackPanel
+            //{
+            //    Orientation = Orientation.Horizontal,
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    VerticalAlignment = VerticalAlignment.Center
+            //};
 
-            // Create logo text
-            TextBlock logoText = new TextBlock
-            {
-                Text = "MARE E MONTI",
-                FontSize = 48,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blue color similar to the logo
-                Margin = new Thickness(10),
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            //// Create logo text
+            //TextBlock logoText = new TextBlock
+            //{
+            //    Text = "MARE E MONTI",
+            //    FontSize = 48,
+            //    FontWeight = FontWeights.Bold,
+            //    Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blue color similar to the logo
+            //    Margin = new Thickness(10),
+            //    VerticalAlignment = VerticalAlignment.Center
+            //};
+
 
             // Create logo tagline
             TextBlock logoTagline = new TextBlock
@@ -123,26 +125,26 @@ namespace MariEMontiRandomPizza
             };
 
             // Create a border for the logo
-            Border logoBorder = new Border
-            {
-                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(5),
-                Padding = new Thickness(15),
-                Margin = new Thickness(10),
-                Child = new StackPanel
-                {
-                    Orientation = Orientation.Vertical,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Children = { logoText, logoTagline, fishDecoration }
-                }
-            };
+            //Border logoBorder = new Border
+            //{
+            //    BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
+            //    BorderThickness = new Thickness(2),
+            //    CornerRadius = new CornerRadius(5),
+            //    Padding = new Thickness(15),
+            //    Margin = new Thickness(10),
+            //    Child = new StackPanel
+            //    {
+            //        Orientation = Orientation.Vertical,
+            //        HorizontalAlignment = HorizontalAlignment.Center,
+            //        Children = { logoText, logoTagline, fishDecoration }
+            //    }
+            //};
 
-            headerPanel.Children.Add(logoBorder);
+            //headerPanel.Children.Add(logoBorder);
 
-            // Set the header in the grid
-            Grid.SetRow(headerPanel, 0);
-            mainGrid.Children.Add(headerPanel);
+            //// Set the header in the grid
+            //Grid.SetRow(headerPanel, 0);
+            //mainGrid.Children.Add(headerPanel);
 
             // Create content area
             Grid contentGrid = new Grid();
@@ -312,6 +314,8 @@ namespace MariEMontiRandomPizza
 
             // Set the content of the window
             this.Content = mainGrid;
+
+            CreateLogoHeader( mainGrid);
         }
 
         // Event handler for random button click
@@ -515,6 +519,221 @@ namespace MariEMontiRandomPizza
             MenuWindow menuWindow = new MenuWindow(pizzaMenu);
             menuWindow.Owner = this;
             menuWindow.ShowDialog();
+        }
+
+        private void CreateLogoHeader(Grid mainGrid)
+        {
+            // Pannello principale per l'header
+            Grid headerGrid = new Grid();
+            headerGrid.Margin = new Thickness(10);
+
+            // Definiamo due colonne: una per il logo e una per le informazioni di contatto
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            // Creiamo il bordo per il logo Mare e Monti (parte sinistra)
+            Border logoBorder = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(220, 240, 255)), // Azzurro chiaro come nell'immagine
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu del bordo
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(5),
+                Margin = new Thickness(5)
+            };
+
+            // Contenuto del logo (StackPanel verticale)
+            StackPanel logoContent = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Creiamo il pannello orizzontale per il logo testuale e l'icona del pesce
+            StackPanel logoTextPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(10, 5, 10, 0)
+            };
+
+            // Testo "MARE E MONTI"
+            TextBlock mareMontiText = new TextBlock
+            {
+                Text = "MARE E MONTI",
+                FontSize = 40,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nell'immagine
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            logoTextPanel.Children.Add(mareMontiText);
+
+            // Creiamo l'icona del pesce usando Shapes
+            Canvas fishIcon = new Canvas
+            {
+                Width = 60,
+                Height = 30,
+                Margin = new Thickness(10, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Corpo del pesce
+            System.Windows.Shapes.Path fishBody = new System.Windows.Shapes.Path
+            {
+                Fill = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nell'immagine
+                Data = Geometry.Parse("M 0,15 C 5,5 20,0 40,15 C 20,30 5,25 0,15 Z") // Forma semplificata di pesce
+            };
+            fishIcon.Children.Add(fishBody);
+
+            // Occhio del pesce
+            Ellipse fishEye = new Ellipse
+            {
+                Width = 4,
+                Height = 4,
+                Fill = new SolidColorBrush(Colors.White),
+                Margin = new Thickness(10, 13, 0, 0)
+            };
+            fishIcon.Children.Add(fishEye);
+
+            // Coda del pesce
+            System.Windows.Shapes.Path fishTail = new System.Windows.Shapes.Path
+            {
+                Fill = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nell'immagine
+                Data = Geometry.Parse("M 40,15 L 55,5 L 55,25 Z") // Forma triangolare della coda
+            };
+            fishIcon.Children.Add(fishTail);
+
+            logoTextPanel.Children.Add(fishIcon);
+            logoContent.Children.Add(logoTextPanel);
+
+            // Testo "PIZZERIA D'ASPORTO"
+            TextBlock pizzeriaText = new TextBlock
+            {
+                Text = "PIZZERIA D'ASPORTO",
+                FontSize = 18,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nell'immagine
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            logoContent.Children.Add(pizzeriaText);
+
+            // Aggiungiamo l'icona del sole in rosso come nell'immagine
+            Canvas sunIcon = new Canvas
+            {
+                Width = 30,
+                Height = 30,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(20, 10, 0, 10)
+            };
+
+            // Cerchio del sole
+            Ellipse sunCircle = new Ellipse
+            {
+                Width = 20,
+                Height = 20,
+                Fill = new SolidColorBrush(Color.FromRgb(255, 60, 50)), // Rosso come nell'immagine
+            };
+            Canvas.SetLeft(sunCircle, 5);
+            Canvas.SetTop(sunCircle, 5);
+            sunIcon.Children.Add(sunCircle);
+
+            // Raggi del sole
+            for (int i = 0; i < 8; i++)
+            {
+                Line ray = new Line
+                {
+                    X1 = 15,
+                    Y1 = 15,
+                    X2 = 15 + 12 * Math.Cos(i * Math.PI / 4),
+                    Y2 = 15 + 12 * Math.Sin(i * Math.PI / 4),
+                    Stroke = new SolidColorBrush(Color.FromRgb(255, 60, 50)), // Rosso come nell'immagine
+                    StrokeThickness = 2
+                };
+                sunIcon.Children.Add(ray);
+            }
+
+            logoContent.Children.Add(sunIcon);
+            logoBorder.Child = logoContent;
+
+            Grid.SetColumn(logoBorder, 0);
+            headerGrid.Children.Add(logoBorder);
+
+            // Informazioni di contatto (parte destra)
+            Border contactBorder = new Border
+            {
+                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel testo del telefono
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(5),
+                Padding = new Thickness(10),
+                Margin = new Thickness(5)
+            };
+
+            StackPanel contactInfo = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Titolo BAR - TABACCHI
+            TextBlock barTabacchi = new TextBlock
+            {
+                Text = "BAR - TABACCHI",
+                FontSize = 16,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            contactInfo.Children.Add(barTabacchi);
+
+            // Informazioni promozione
+            TextBlock promoInfo = new TextBlock
+            {
+                Text = "Ogni pizza acquistata vale 1 punto.\n" +
+                       "Ogni 10 punti una pizza margherita\n" +
+                       "(promazione valida da mercoledì a venerdì)",
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+                HorizontalAlignment = HorizontalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                LineHeight = 18,
+                Margin = new Thickness(0, 10, 0, 0) // Sposta in basso di 10 pixel
+            };
+            contactInfo.Children.Add(promoInfo);
+
+            // Numero di telefono evidenziato
+            TextBlock phoneNumber = new TextBlock
+            {
+                Text = "Tel. 035 904800",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+            contactInfo.Children.Add(phoneNumber);
+
+            // Informazioni aggiuntive
+            TextBlock additionalInfo = new TextBlock
+            {
+                Text = "Pizza con farina integrale\n" +
+                       "Vendita vino sfuso D.O.P. € 2,20/litro",
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
+                HorizontalAlignment = HorizontalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                LineHeight = 18
+            };
+            contactInfo.Children.Add(additionalInfo);
+
+            contactBorder.Child = contactInfo;
+            Grid.SetColumn(contactBorder, 1);
+            headerGrid.Children.Add(contactBorder);
+
+            Grid.SetRow(headerGrid, 0);
+            mainGrid.Children.Add(headerGrid);
         }
     }
 }
