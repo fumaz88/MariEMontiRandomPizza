@@ -25,7 +25,7 @@ namespace MariEMontiRandomPizza
         private CheckBox _excludeIngredientsCheckBox;
 
         // Carrello
-        private Dictionary<Pizza, int> _cart = new Dictionary<Pizza, int>();
+        //private Dictionary<Pizza, int> _cart = new Dictionary<Pizza, int>();
         private TextBlock _cartTotalText;
         private TextBlock _cartItemCountText;
         private Border _cartSummaryBorder;
@@ -49,6 +49,8 @@ namespace MariEMontiRandomPizza
             {
                 MessageBox.Show("Impossibile caricare l'icona: " + ex.Message);
             }
+
+            Loaded += MyWindow_Loaded;
 
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             this.Background = new SolidColorBrush(Colors.White);
@@ -366,6 +368,20 @@ namespace MariEMontiRandomPizza
             this.Content = mainGrid;
         }
 
+        private void MyWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (App.Cart.Count > 0)
+            {
+                // Show cart if it was hidden
+                if (_cartSummaryBorder.Visibility == Visibility.Collapsed)
+                {
+                    _cartSummaryBorder.Visibility = Visibility.Visible;
+                }
+
+                UpdateCartUI();
+            }
+        }
+
         private void CreateCartSummary(Grid mainGrid)
         {
             // Create cart summary border
@@ -374,8 +390,8 @@ namespace MariEMontiRandomPizza
                 Background = new SolidColorBrush(Color.FromRgb(245, 245, 255)),
                 BorderThickness = new Thickness(0, 1, 0, 0),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
-                Padding = new Thickness(5),
-                MaxHeight = 250
+                Padding = new Thickness(5)
+                // Rimosso MaxHeight per evitare limitazioni
             };
 
             _cartExpander = new Expander
@@ -428,7 +444,7 @@ namespace MariEMontiRandomPizza
             ScrollViewer cartScrollViewer = new ScrollViewer
             {
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                MaxHeight = 200
+                MaxHeight = 200  // Limita l'altezza solo dello ScrollViewer, non dell'intero border
             };
 
             _cartItemsPanel = new StackPanel
@@ -439,7 +455,7 @@ namespace MariEMontiRandomPizza
             cartScrollViewer.Content = _cartItemsPanel;
             _cartExpander.Content = cartScrollViewer;
 
-            // Button Panel for cart actions
+            // Button Panel for cart actions - Ora separato dal contenuto espandibile
             StackPanel cartButtonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -460,13 +476,13 @@ namespace MariEMontiRandomPizza
 
             cartButtonPanel.Children.Add(clearCartButton);
 
-            // Stack panel for everything
+            // Stack panel for everything - Il pulsante è ora fuori dall'expander
             StackPanel cartContainer = new StackPanel
             {
                 Orientation = Orientation.Vertical
             };
             cartContainer.Children.Add(_cartExpander);
-            cartContainer.Children.Add(cartButtonPanel);
+            cartContainer.Children.Add(cartButtonPanel);  // Aggiunto dopo l'expander
 
             _cartSummaryBorder.Child = cartContainer;
             Grid.SetRow(_cartSummaryBorder, 4);
@@ -721,14 +737,15 @@ namespace MariEMontiRandomPizza
 
         private void AddToCart(Pizza pizza)
         {
+            
             // Add pizza to cart or increment its quantity
-            if (_cart.ContainsKey(pizza))
+            if (App.Cart.ContainsKey(pizza))
             {
-                _cart[pizza]++;
+                App.Cart[pizza]++;
             }
             else
             {
-                _cart.Add(pizza, 1);
+                App.Cart.Add(pizza, 1);
             }
 
             // Show cart if it was hidden
@@ -738,7 +755,7 @@ namespace MariEMontiRandomPizza
             }
 
             // Expand the cart expander if this is the first item
-            if (_cart.Count == 1)
+            if (App.Cart.Count == 1)
             {
                 _cartExpander.IsExpanded = true;
             }
@@ -829,7 +846,7 @@ namespace MariEMontiRandomPizza
             double totalPrice = 0;
             int totalItems = 0;
 
-            foreach (var item in _cart)
+            foreach (var item in App.Cart)
             {
                 Pizza pizza = item.Key;
                 int quantity = item.Value;
@@ -951,18 +968,18 @@ namespace MariEMontiRandomPizza
 
         private void DecrementQuantity(Pizza pizza)
         {
-            if (_cart.ContainsKey(pizza))
+            if (App.Cart.ContainsKey(pizza))
             {
-                _cart[pizza]--;
+                App.Cart[pizza]--;
 
                 // Remove item if quantity is 0
-                if (_cart[pizza] <= 0)
+                if (App.Cart[pizza] <= 0)
                 {
-                    _cart.Remove(pizza);
+                    App.Cart.Remove(pizza);
                 }
 
                 // If cart is empty, hide it
-                if (_cart.Count == 0)
+                if (App.Cart.Count == 0)
                 {
                     _cartSummaryBorder.Visibility = Visibility.Collapsed;
                 }
@@ -974,12 +991,12 @@ namespace MariEMontiRandomPizza
 
         private void RemoveFromCart(Pizza pizza)
         {
-            if (_cart.ContainsKey(pizza))
+            if (App.Cart.ContainsKey(pizza))
             {
-                _cart.Remove(pizza);
+                App.Cart.Remove(pizza);
 
                 // If cart is empty, hide it
-                if (_cart.Count == 0)
+                if (App.Cart.Count == 0)
                 {
                     _cartSummaryBorder.Visibility = Visibility.Collapsed;
                 }
@@ -992,7 +1009,7 @@ namespace MariEMontiRandomPizza
         private void ClearCart(object sender, RoutedEventArgs e)
         {
             // Clear the cart
-            _cart.Clear();
+            App.Cart.Clear();
 
             // Hide the cart summary
             _cartSummaryBorder.Visibility = Visibility.Collapsed;

@@ -396,6 +396,7 @@ namespace MariEMontiRandomPizza
 
                 // Esegui la dissolvenza con rivelazione carattere per carattere
                 RevealTextCharByChar();
+                App.Cart.AddToCart(selectedPizza);
             }
             else
             {
