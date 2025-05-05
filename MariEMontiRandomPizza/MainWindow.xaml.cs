@@ -25,6 +25,8 @@ namespace MariEMontiRandomPizza
         private int slotMachineCounter = 0;
         private const int SLOT_MACHINE_ITERATIONS = 20; // Numero di iterazioni dello slot machine
         private const int CHARACTER_REVEAL_DELAY_MS = 50; // Ritardo tra la rivelazione di ogni carattere
+        private SoundPlayer spinSoundPlayer; // Campo per mantenere il riferimento al player
+        private SoundPlayer winSoundPlayer; // Campo per mantenere il riferimento al player
 
         public MainWindow()
         {
@@ -276,7 +278,7 @@ namespace MariEMontiRandomPizza
             // Set the content of the window
             this.Content = mainGrid;
 
-            CreateLogoHeader( mainGrid);
+            CreateLogoHeader(mainGrid);
         }
 
         // Event handler for random button click
@@ -288,6 +290,15 @@ namespace MariEMontiRandomPizza
             Button button = (Button)sender;
             button.IsEnabled = false;
 
+            // Pulisci tutti i campi all'inizio dello spin
+            TextBlock pizzaNameText = (TextBlock)this.FindName("PizzaNameText");
+            TextBlock pizzaIngredientsText = (TextBlock)this.FindName("PizzaIngredientsText");
+            TextBlock pizzaPriceText = (TextBlock)this.FindName("PizzaPriceText");
+
+            pizzaNameText.Text = "";
+            pizzaIngredientsText.Text = "";
+            pizzaPriceText.Text = "";
+
             // Select a random pizza
             int randomIndex = random.Next(pizzaMenu.Count);
             selectedPizza = pizzaMenu[randomIndex];
@@ -295,7 +306,7 @@ namespace MariEMontiRandomPizza
             // Avvia l'animazione dello slot machine
             slotMachineCounter = 0;
             slotMachineTimer.Start();
-            
+
 
             // Aggiunge un effetto di lampeggiamento al bordo del risultato
             Border resultBorder = VisualTreeHelper.GetParent((DependencyObject)FindName("PizzaNameText")) as Border;
@@ -339,7 +350,7 @@ namespace MariEMontiRandomPizza
 
         private void SlotMachineTimer_Tick(object sender, EventArgs e)
         {
-           
+
             TextBlock pizzaNameText = (TextBlock)this.FindName("PizzaNameText");
             TextBlock pizzaIngredientsText = (TextBlock)this.FindName("PizzaIngredientsText");
             TextBlock pizzaPriceText = (TextBlock)this.FindName("PizzaPriceText");
@@ -655,25 +666,60 @@ namespace MariEMontiRandomPizza
         {
             try
             {
-                var player = new SoundPlayer("Resources/game_win_success.wav");
-                player.Play();
+                if (spinSoundPlayer != null)
+                {
+                    spinSoundPlayer.Stop();
+                }
+
+                // Inizializza il player per il suono di vittoria se necessario
+                if (winSoundPlayer == null)
+                {
+                    winSoundPlayer = new SoundPlayer("Resources/game_win_success.wav");
+                }
+
+                winSoundPlayer.Play();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Errore durante la riproduzione del suono: {ex.Message}");
             }
+
         }
 
         private void PlaySpinSound()
         {
             try
             {
-                var player = new SoundPlayer("Resources/classic-slot-machine.wav");
-                player.Play();
+                // Inizializza il player per il suono di spin se necessario
+                if (spinSoundPlayer == null)
+                {
+                    spinSoundPlayer = new SoundPlayer("Resources/classic-slot-machine.wav");
+                }
+
+                spinSoundPlayer.Play();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Errore durante la riproduzione del suono: {ex.Message}");
+
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            // Pulizia delle risorse audio
+            if (spinSoundPlayer != null)
+            {
+                spinSoundPlayer.Dispose();
+                spinSoundPlayer = null;
+            }
+
+            if (winSoundPlayer != null)
+            {
+                winSoundPlayer.Dispose();
+                winSoundPlayer = null;
             }
         }
     }
