@@ -245,6 +245,17 @@ namespace MariEMontiRandomPizza
                 Name = "PizzaPriceText"
             };
 
+            // Cart icon using Path
+            Image smilePizzaIcon = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-kawaii-pizza-80.png")),
+                Width = 65,
+                Height = 65,
+                Margin = new Thickness(0, 0, 5, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            resultPanel.Children.Add(smilePizzaIcon);
             resultPanel.Children.Add(resultTitleText);
             resultPanel.Children.Add(pizzaNameText);
             resultPanel.Children.Add(pizzaIngredientsText);
