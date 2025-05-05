@@ -102,12 +102,19 @@ namespace MariEMontiRandomPizza
             {
                 Text = "Ordina per:",
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)) // Rosso come nel logo
             };
 
             _sortComboBox = new ComboBox
             {
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Padding = new Thickness(5),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
+                BorderThickness = new Thickness(1),
+                Background = new SolidColorBrush(Colors.White),
+                FontFamily = new FontFamily("Arial"),
+                FontWeight = FontWeights.Bold
             };
             _sortComboBox.Items.Add("Nome (A-Z)");
             _sortComboBox.Items.Add("Nome (Z-A)");
@@ -133,12 +140,19 @@ namespace MariEMontiRandomPizza
             {
                 Text = "Fascia di prezzo:",
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)) // Rosso come nel logo
             };
 
             _priceRangeComboBox = new ComboBox
             {
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Padding = new Thickness(5),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
+                BorderThickness = new Thickness(1),
+                Background = new SolidColorBrush(Colors.White),
+                FontFamily = new FontFamily("Arial"),
+                FontWeight = FontWeights.Bold
             };
             _priceRangeComboBox.Items.Add("Tutti i prezzi");
             _priceRangeComboBox.Items.Add("Fino a €5");
@@ -165,12 +179,19 @@ namespace MariEMontiRandomPizza
             {
                 Text = "Tipo di pizza:",
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)) // Rosso come nel logo
             };
 
             _typeComboBox = new ComboBox
             {
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Padding = new Thickness(5),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
+                BorderThickness = new Thickness(1),
+                Background = new SolidColorBrush(Colors.White),
+                FontFamily = new FontFamily("Arial"),
+                FontWeight = FontWeights.Bold
             };
             _typeComboBox.Items.Add("Tutti i tipi");
             _typeComboBox.Items.Add("Pizza");
@@ -196,7 +217,8 @@ namespace MariEMontiRandomPizza
             {
                 Text = "Ricerca:",
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)) // Rosso come nel logo
             };
 
             _searchIngredientTextBox = new TextBox
@@ -222,15 +244,18 @@ namespace MariEMontiRandomPizza
 
             TextBlock excludeLabel = new TextBlock
             {
-                Text = "Opzioni riicerca:",
+                Text = "Opzioni ricerca:",
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(0, 0, 0, 5),
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)) // Rosso come nel logo
             };
 
             _excludeIngredientsCheckBox = new CheckBox
             {
-                Content = "Escludi parole ricercate",
-                Margin = new Thickness(0, 5, 0, 0)
+                Content = "Escludi gli ingredienti",
+                Margin = new Thickness(0, 5, 0, 0),
+                Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
+                FontFamily = new FontFamily("Arial")
             };
             _excludeIngredientsCheckBox.Checked += FilterAndSort;
             _excludeIngredientsCheckBox.Unchecked += FilterAndSort;
@@ -240,8 +265,11 @@ namespace MariEMontiRandomPizza
                 Content = "Reimposta filtri",
                 Margin = new Thickness(0, 10, 0, 0),
                 Padding = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
-                Foreground = new SolidColorBrush(Colors.White)
+                Background = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Rosso come nel logo
+                Foreground = new SolidColorBrush(Colors.White),
+                FontWeight = FontWeights.Bold,
+                FontFamily = new FontFamily("Arial"),
+                BorderThickness = new Thickness(0)
             };
             resetFiltersButton.Click += ResetFilters;
 
@@ -445,7 +473,8 @@ namespace MariEMontiRandomPizza
                 // Create a border for each pizza
                 Border pizzaBorder = new Border
                 {
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
+                    //BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(5),
                     Margin = new Thickness(5),
@@ -467,7 +496,8 @@ namespace MariEMontiRandomPizza
                     FontWeight = FontWeights.Bold,
                     TextWrapping = TextWrapping.Wrap,
                     Margin = new Thickness(0, 0, 0, 5),
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel logo
                 };
 
                 // Pizza ingredients
@@ -478,7 +508,8 @@ namespace MariEMontiRandomPizza
                     TextWrapping = TextWrapping.Wrap,
                     Margin = new Thickness(0, 0, 0, 5),
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    TextAlignment = TextAlignment.Center
+                    TextAlignment = TextAlignment.Center,
+                    Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)) // Blu come nel logo
                 };
 
                 // Pizza price
@@ -486,8 +517,8 @@ namespace MariEMontiRandomPizza
                 {
                     Text = $"€ {pizza.Price:F2}",
                     FontWeight = FontWeights.Bold,
-                    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)) // Blu come nel logo
                 };
 
                 // Add elements to the stack panel
