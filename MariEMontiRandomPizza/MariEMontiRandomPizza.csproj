@@ -10,11 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\cart-shopping-solid.png" />
+    <None Remove="Images\icons8-cart-32.png" />
     <None Remove="Images\MariEmontiIcon.ico" />
     <None Remove="Resources\classic-slot-machine.wav" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\cart-shopping-solid.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\icons8-cart-32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\MariEmontiIcon.ico" />
     <Content Include="Resources\classic-slot-machine.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

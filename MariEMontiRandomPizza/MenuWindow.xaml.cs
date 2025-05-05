@@ -391,14 +391,12 @@ namespace MariEMontiRandomPizza
             };
 
             // Cart icon using Path
-            Path cartIcon = new Path
+            Image cartIcon = new Image
             {
-                Data = Geometry.Parse("M0,0 L4,0 L6,6 L20,6 L18,14 L4,14 L0,0 M6,16 A2,2 0 1 0 10,16 A2,2 0 1 0 6,16 M14,16 A2,2 0 1 0 18,16 A2,2 0 1 0 14,16"),
-                Fill = new SolidColorBrush(Color.FromRgb(220, 50, 50)),
-                Margin = new Thickness(0, 0, 10, 0),
-                Width = 22,
-                Height = 22,
-                Stretch = Stretch.Uniform,
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-cart-32.png")),
+                Width = 29,
+                Height = 29,
+                Margin = new Thickness(0, 0, 5, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
 
@@ -684,13 +682,11 @@ namespace MariEMontiRandomPizza
             };
 
             // Create the cart icon
-            Path cartIcon = new Path
+            Image cartIcon = new Image
             {
-                Data = Geometry.Parse("M0,0 L4,0 L6,6 L20,6 L18,14 L4,14 L0,0 M6,16 A2,2 0 1 0 10,16 A2,2 0 1 0 6,16 M14,16 A2,2 0 1 0 18,16 A2,2 0 1 0 14,16"),
-                Fill =  new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel logo
-                Width = 16,
-                Height = 16,
-                Stretch = Stretch.Uniform,
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-cart-32.png")),
+                Width = 22,
+                Height = 22,
                 Margin = new Thickness(0, 0, 5, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
