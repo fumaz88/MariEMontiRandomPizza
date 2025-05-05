@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace MariEMontiRandomPizza
 {
@@ -22,6 +23,14 @@ namespace MariEMontiRandomPizza
         private ComboBox _typeComboBox;
         private TextBox _searchIngredientTextBox;
         private CheckBox _excludeIngredientsCheckBox;
+
+        // Carrello
+        private Dictionary<Pizza, int> _cart = new Dictionary<Pizza, int>();
+        private TextBlock _cartTotalText;
+        private TextBlock _cartItemCountText;
+        private Border _cartSummaryBorder;
+        private StackPanel _cartItemsPanel;
+        private Expander _cartExpander;
 
         public MenuWindow(List<Pizza> pizzaMenu)
         {
@@ -53,6 +62,7 @@ namespace MariEMontiRandomPizza
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(120) }); // Filter options
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Content
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) }); // Footer
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Cart summary
 
             // Create header
             Border headerBorder = new Border
@@ -265,7 +275,7 @@ namespace MariEMontiRandomPizza
                 Content = "Reimposta filtri",
                 Margin = new Thickness(0, 10, 0, 0),
                 Padding = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Rosso come nel logo
+                Background = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
                 Foreground = new SolidColorBrush(Colors.White),
                 FontWeight = FontWeights.Bold,
                 FontFamily = new FontFamily("Arial"),
@@ -308,7 +318,7 @@ namespace MariEMontiRandomPizza
             Grid.SetRow(scrollViewer, 2);
             mainGrid.Children.Add(scrollViewer);
 
-            // Create footer with close button
+            // Create footer with close button and pizza count
             Border footerBorder = new Border
             {
                 Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)),
@@ -349,8 +359,123 @@ namespace MariEMontiRandomPizza
             Grid.SetRow(footerBorder, 3);
             mainGrid.Children.Add(footerBorder);
 
+            // Create cart summary section
+            CreateCartSummary(mainGrid);
+
             // Set the content of the window
             this.Content = mainGrid;
+        }
+
+        private void CreateCartSummary(Grid mainGrid)
+        {
+            // Create cart summary border
+            _cartSummaryBorder = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(245, 245, 255)),
+                BorderThickness = new Thickness(0, 1, 0, 0),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
+                Padding = new Thickness(5),
+                MaxHeight = 250
+            };
+
+            _cartExpander = new Expander
+            {
+                IsExpanded = false,
+                Padding = new Thickness(5)
+            };
+
+            // Header for the expander
+            StackPanel expanderHeader = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            // Cart icon using Path
+            Path cartIcon = new Path
+            {
+                Data = Geometry.Parse("M0,0 L4,0 L6,6 L20,6 L18,14 L4,14 L0,0 M6,16 A2,2 0 1 0 10,16 A2,2 0 1 0 6,16 M14,16 A2,2 0 1 0 18,16 A2,2 0 1 0 14,16"),
+                Fill = new SolidColorBrush(Color.FromRgb(220, 50, 50)),
+                Margin = new Thickness(0, 0, 10, 0),
+                Width = 22,
+                Height = 22,
+                Stretch = Stretch.Uniform,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            _cartItemCountText = new TextBlock
+            {
+                Text = "Carrello (0 pizze)",
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(5, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204))
+            };
+
+            _cartTotalText = new TextBlock
+            {
+                Text = "Totale: € 0.00",
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(5, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50))
+            };
+
+            expanderHeader.Children.Add(cartIcon);
+            expanderHeader.Children.Add(_cartItemCountText);
+            expanderHeader.Children.Add(_cartTotalText);
+
+            _cartExpander.Header = expanderHeader;
+
+            // Create ScrollViewer for cart items
+            ScrollViewer cartScrollViewer = new ScrollViewer
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                MaxHeight = 200
+            };
+
+            _cartItemsPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            cartScrollViewer.Content = _cartItemsPanel;
+            _cartExpander.Content = cartScrollViewer;
+
+            // Button Panel for cart actions
+            StackPanel cartButtonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 5, 5, 0)
+            };
+
+            Button clearCartButton = new Button
+            {
+                Content = "Svuota Carrello",
+                Padding = new Thickness(10, 5, 10, 5),
+                Margin = new Thickness(5, 0, 0, 0),
+                Background = new SolidColorBrush(Color.FromRgb(220, 50, 50)),
+                Foreground = new SolidColorBrush(Colors.White),
+                BorderThickness = new Thickness(0)
+            };
+            clearCartButton.Click += ClearCart;
+
+            cartButtonPanel.Children.Add(clearCartButton);
+
+            // Stack panel for everything
+            StackPanel cartContainer = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            cartContainer.Children.Add(_cartExpander);
+            cartContainer.Children.Add(cartButtonPanel);
+
+            _cartSummaryBorder.Child = cartContainer;
+            Grid.SetRow(_cartSummaryBorder, 4);
+            mainGrid.Children.Add(_cartSummaryBorder);
+
+            // Initially hide cart if empty
+            _cartSummaryBorder.Visibility = Visibility.Collapsed;
         }
 
         private void ResetFilters(object sender, RoutedEventArgs e)
@@ -479,7 +604,6 @@ namespace MariEMontiRandomPizza
                 // Create a border for each pizza
                 Border pizzaBorder = new Border
                 {
-                    //BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Red color
                     BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Blu come nel logo
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(5),
@@ -527,10 +651,14 @@ namespace MariEMontiRandomPizza
                     Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204)) // Blu come nel logo
                 };
 
+                // Add cart button with icon
+                Button addToCartButton = CreateCartButton(pizza);
+
                 // Add elements to the stack panel
                 pizzaDetails.Children.Add(nameText);
                 pizzaDetails.Children.Add(ingredientsText);
                 pizzaDetails.Children.Add(priceText);
+                pizzaDetails.Children.Add(addToCartButton);
 
                 // Add stack panel to the border
                 pizzaBorder.Child = pizzaDetails;
@@ -544,6 +672,337 @@ namespace MariEMontiRandomPizza
             {
                 _pizzaCountText.Text = $"Pizze visualizzate: {_filteredPizzas.Count} / {_allPizzas.Count}";
             }
+        }
+
+        private Button CreateCartButton(Pizza pizza)
+        {
+            // Create a StackPanel for the button content
+            StackPanel buttonContent = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            // Create the cart icon
+            Path cartIcon = new Path
+            {
+                Data = Geometry.Parse("M0,0 L4,0 L6,6 L20,6 L18,14 L4,14 L0,0 M6,16 A2,2 0 1 0 10,16 A2,2 0 1 0 6,16 M14,16 A2,2 0 1 0 18,16 A2,2 0 1 0 14,16"),
+                Fill =  new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel logo
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                Margin = new Thickness(0, 0, 5, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Create the text for the button
+            TextBlock buttonText = new TextBlock
+            {
+                Text = "",
+                Foreground = new SolidColorBrush(Colors.White),
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 12
+            };
+
+            buttonContent.Children.Add(cartIcon);
+            buttonContent.Children.Add(buttonText);
+
+            // Create the button
+            Button addToCartButton = new Button
+            {
+                Content = buttonContent,
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Padding = new Thickness(8, 4, 8, 4),
+                Margin = new Thickness(0, 8, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            addToCartButton.Click += (sender, e) => AddToCart(pizza);
+
+            return addToCartButton;
+        }
+
+        private void AddToCart(Pizza pizza)
+        {
+            // Add pizza to cart or increment its quantity
+            if (_cart.ContainsKey(pizza))
+            {
+                _cart[pizza]++;
+            }
+            else
+            {
+                _cart.Add(pizza, 1);
+            }
+
+            // Show cart if it was hidden
+            if (_cartSummaryBorder.Visibility == Visibility.Collapsed)
+            {
+                _cartSummaryBorder.Visibility = Visibility.Visible;
+            }
+
+            // Expand the cart expander if this is the first item
+            if (_cart.Count == 1)
+            {
+                _cartExpander.IsExpanded = true;
+            }
+
+            // Update the cart UI
+            UpdateCartUI();
+
+            // Show feedback
+            //ShowAddToCartFeedback(pizza);
+        }
+
+        //private void ShowAddToCartFeedback(Pizza pizza)
+        //{
+        //    // Create a popup window or toast notification
+        //    Window feedbackWindow = new Window
+        //    {
+        //        Width = 250,
+        //        Height = 100,
+        //        WindowStyle = WindowStyle.None,
+        //        AllowsTransparency = true,
+        //        Background = new SolidColorBrush(Colors.Transparent),
+        //        Topmost = true,
+        //        ResizeMode = ResizeMode.NoResize,
+        //        ShowInTaskbar = false,
+        //        Owner = this
+        //    };
+
+        //    // Create border with rounded corners
+        //    Border feedbackBorder = new Border
+        //    {
+        //        Background = new SolidColorBrush(Color.FromArgb(230, 0, 102, 204)), // Semi-transparent blue
+        //        CornerRadius = new CornerRadius(8),
+        //        Padding = new Thickness(15)
+        //    };
+
+        //    // Create content
+        //    StackPanel feedbackContent = new StackPanel
+        //    {
+        //        Orientation = Orientation.Vertical
+        //    };
+
+        //    TextBlock messageText = new TextBlock
+        //    {
+        //        Text = $"{pizza.Name}",
+        //        Foreground = new SolidColorBrush(Colors.White),
+        //        FontWeight = FontWeights.Bold,
+        //        TextWrapping = TextWrapping.Wrap,
+        //        HorizontalAlignment = HorizontalAlignment.Center
+        //    };
+
+        //    TextBlock addedText = new TextBlock
+        //    {
+        //        Text = "Aggiunta al carrello!",
+        //        Foreground = new SolidColorBrush(Colors.White),
+        //        HorizontalAlignment = HorizontalAlignment.Center,
+        //        Margin = new Thickness(0, 5, 0, 0)
+        //    };
+
+        //    feedbackContent.Children.Add(messageText);
+        //    feedbackContent.Children.Add(addedText);
+        //    feedbackBorder.Child = feedbackContent;
+        //    feedbackWindow.Content = feedbackBorder;
+
+        //    // Position the feedback window in the bottom right
+        //    feedbackWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+        //    feedbackWindow.Left = this.Left + this.Width - feedbackWindow.Width - 200;
+        //    feedbackWindow.Top = this.Top + this.Height - feedbackWindow.Height - 200;
+
+        //    // Show the feedback window
+        //    feedbackWindow.Show();
+
+        //    // Close the feedback window after 1.5 seconds
+        //    System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
+        //    timer.Interval = TimeSpan.FromSeconds(1.0);
+        //    timer.Tick += (sender, e) =>
+        //    {
+        //        feedbackWindow.Close();
+        //        timer.Stop();
+        //    };
+        //    timer.Start();
+        //}
+
+        private void UpdateCartUI()
+        {
+            _cartItemsPanel.Children.Clear();
+
+            // Calculate total price
+            double totalPrice = 0;
+            int totalItems = 0;
+
+            foreach (var item in _cart)
+            {
+                Pizza pizza = item.Key;
+                int quantity = item.Value;
+                double itemTotal = (double)(pizza.Price * quantity);
+                totalPrice += itemTotal;
+                totalItems += quantity;
+
+                // Create item row
+                Border itemBorder = new Border
+                {
+                    BorderThickness = new Thickness(0, 0, 0, 1),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
+                    Padding = new Thickness(5)
+                };
+
+                Grid itemGrid = new Grid();
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(25) });
+
+                // Pizza name
+                TextBlock nameText = new TextBlock
+                {
+                    Text = pizza.Name,
+                    FontWeight = FontWeights.Bold,
+                    TextWrapping = TextWrapping.Wrap,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = new SolidColorBrush(Color.FromRgb(0, 102, 204))
+                };
+                Grid.SetColumn(nameText, 0);
+
+                // Quantity controls
+                StackPanel quantityPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+
+                Button decrementButton = new Button
+                {
+                    Content = "-",
+                    Width = 20,
+                    Height = 20,
+                    Padding = new Thickness(0),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Background = new SolidColorBrush(Color.FromRgb(240, 240, 240))
+                };
+                decrementButton.Click += (sender, e) => DecrementQuantity(pizza);
+
+                TextBlock quantityText = new TextBlock
+                {
+                    Text = quantity.ToString(),
+                    Width = 20,
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(2, 0, 2, 0)
+                };
+
+                Button incrementButton = new Button
+                {
+                    Content = "+",
+                    Width = 20,
+                    Height = 20,
+                    Padding = new Thickness(0),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Background = new SolidColorBrush(Color.FromRgb(240, 240, 240))
+                };
+                incrementButton.Click += (sender, e) => AddToCart(pizza);
+
+                quantityPanel.Children.Add(decrementButton);
+                quantityPanel.Children.Add(quantityText);
+                quantityPanel.Children.Add(incrementButton);
+                Grid.SetColumn(quantityPanel, 1);
+
+                // Item total price
+                TextBlock priceText = new TextBlock
+                {
+                    Text = $"€ {itemTotal:F2}",
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Right,
+                    Margin = new Thickness(5, 0, 5, 0),
+                    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50))
+                };
+                Grid.SetColumn(priceText, 2);
+
+                // Remove button
+                Button removeButton = new Button
+                {
+                    Content = "✕",
+                    Width = 20,
+                    Height = 20,
+                    Padding = new Thickness(0),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Background = new SolidColorBrush(Color.FromRgb(220, 50, 50)),
+                    Foreground = new SolidColorBrush(Colors.White),
+                    BorderThickness = new Thickness(0)
+                };
+                removeButton.Click += (sender, e) => RemoveFromCart(pizza);
+                Grid.SetColumn(removeButton, 3);
+
+                itemGrid.Children.Add(nameText);
+                itemGrid.Children.Add(quantityPanel);
+                itemGrid.Children.Add(priceText);
+                itemGrid.Children.Add(removeButton);
+
+                itemBorder.Child = itemGrid;
+                _cartItemsPanel.Children.Add(itemBorder);
+            }
+
+            // Update summary info
+            _cartItemCountText.Text = $"Carrello ({totalItems} {(totalItems == 1 ? "pizza" : "pizze")})";
+            _cartTotalText.Text = $"Totale: € {totalPrice:F2}";
+        }
+
+        private void DecrementQuantity(Pizza pizza)
+        {
+            if (_cart.ContainsKey(pizza))
+            {
+                _cart[pizza]--;
+
+                // Remove item if quantity is 0
+                if (_cart[pizza] <= 0)
+                {
+                    _cart.Remove(pizza);
+                }
+
+                // If cart is empty, hide it
+                if (_cart.Count == 0)
+                {
+                    _cartSummaryBorder.Visibility = Visibility.Collapsed;
+                }
+
+                // Update the cart UI
+                UpdateCartUI();
+            }
+        }
+
+        private void RemoveFromCart(Pizza pizza)
+        {
+            if (_cart.ContainsKey(pizza))
+            {
+                _cart.Remove(pizza);
+
+                // If cart is empty, hide it
+                if (_cart.Count == 0)
+                {
+                    _cartSummaryBorder.Visibility = Visibility.Collapsed;
+                }
+
+                // Update the cart UI
+                UpdateCartUI();
+            }
+        }
+
+        private void ClearCart(object sender, RoutedEventArgs e)
+        {
+            // Clear the cart
+            _cart.Clear();
+
+            // Hide the cart summary
+            _cartSummaryBorder.Visibility = Visibility.Collapsed;
+
+            // Update the cart UI
+            UpdateCartUI();
         }
     }
 }
