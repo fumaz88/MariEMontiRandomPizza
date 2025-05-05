@@ -31,6 +31,7 @@ namespace MariEMontiRandomPizza
         public MainWindow()
         {
             InitializeComponent();
+            InitializeResources();
             InitializeGUI();
             LoadPizzaMenu();
             InitializeSlotMachineTimer();
@@ -281,6 +282,21 @@ namespace MariEMontiRandomPizza
             CreateLogoHeader(mainGrid);
         }
 
+        private void InitializeResources()
+        {
+            try
+            {
+                spinSoundPlayer = new SoundPlayer("Resources/classic-slot-machine.wav");
+                spinSoundPlayer.Load();
+
+                winSoundPlayer = new SoundPlayer("Resources/game_win_success.wav");
+                winSoundPlayer.Load();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Errore durante il caricamento del suono: " + ex.Message);
+            }
+        }
         // Event handler for random button click
         private void RandomButton_Click(object sender, RoutedEventArgs e)
         {
