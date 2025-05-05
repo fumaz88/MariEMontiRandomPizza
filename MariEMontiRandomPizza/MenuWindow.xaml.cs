@@ -194,7 +194,7 @@ namespace MariEMontiRandomPizza
 
             TextBlock ingredientLabel = new TextBlock
             {
-                Text = "Filtra per ingredienti:",
+                Text = "Ricerca:",
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(0, 0, 0, 5)
             };
@@ -222,14 +222,14 @@ namespace MariEMontiRandomPizza
 
             TextBlock excludeLabel = new TextBlock
             {
-                Text = "Opzioni ingredienti:",
+                Text = "Opzioni riicerca:",
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(0, 0, 0, 5)
             };
 
             _excludeIngredientsCheckBox = new CheckBox
             {
-                Content = "Escludi gli ingredienti",
+                Content = "Escludi parole ricercate",
                 Margin = new Thickness(0, 5, 0, 0)
             };
             _excludeIngredientsCheckBox.Checked += FilterAndSort;
@@ -371,7 +371,8 @@ namespace MariEMontiRandomPizza
                 else
                 {
                     _filteredPizzas = _filteredPizzas.Where(p => p.Name.ToLower().Contains(selectedType.ToLower()) ||
-                                                              p.Ingredients.ToLower().Contains(selectedType.ToLower())).ToList();
+                                                              p.Ingredients.ToLower().Contains(selectedType.ToLower())
+                                                              || p.Ingredients.ToLower().Contains("bianca")).ToList();
                 }
             }
 
