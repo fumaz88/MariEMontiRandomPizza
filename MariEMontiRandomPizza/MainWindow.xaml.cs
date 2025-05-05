@@ -282,6 +282,8 @@ namespace MariEMontiRandomPizza
         // Event handler for random button click
         private void RandomButton_Click(object sender, RoutedEventArgs e)
         {
+            PlaySpinSound();
+
             // Disabilita il bottone durante l'animazione
             Button button = (Button)sender;
             button.IsEnabled = false;
@@ -293,6 +295,7 @@ namespace MariEMontiRandomPizza
             // Avvia l'animazione dello slot machine
             slotMachineCounter = 0;
             slotMachineTimer.Start();
+            
 
             // Aggiunge un effetto di lampeggiamento al bordo del risultato
             Border resultBorder = VisualTreeHelper.GetParent((DependencyObject)FindName("PizzaNameText")) as Border;
@@ -336,6 +339,7 @@ namespace MariEMontiRandomPizza
 
         private void SlotMachineTimer_Tick(object sender, EventArgs e)
         {
+           
             TextBlock pizzaNameText = (TextBlock)this.FindName("PizzaNameText");
             TextBlock pizzaIngredientsText = (TextBlock)this.FindName("PizzaIngredientsText");
             TextBlock pizzaPriceText = (TextBlock)this.FindName("PizzaPriceText");
@@ -643,79 +647,6 @@ namespace MariEMontiRandomPizza
             Grid.SetColumn(logoBorder, 0);
             headerGrid.Children.Add(logoBorder);
 
-            // Informazioni di contatto (parte destra)
-            //Border contactBorder = new Border
-            //{
-            //    BorderBrush = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel testo del telefono
-            //    BorderThickness = new Thickness(2),
-            //    CornerRadius = new CornerRadius(5),
-            //    Padding = new Thickness(10),
-            //    Margin = new Thickness(5)
-            //};
-
-            //StackPanel contactInfo = new StackPanel
-            //{
-            //    Orientation = Orientation.Vertical,
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    VerticalAlignment = VerticalAlignment.Center
-            //};
-
-            //// Titolo BAR - TABACCHI
-            //TextBlock barTabacchi = new TextBlock
-            //{
-            //    Text = "BAR - TABACCHI",
-            //    FontSize = 16,
-            //    FontWeight = FontWeights.Bold,
-            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    Margin = new Thickness(0, 0, 0, 10)
-            //};
-            //contactInfo.Children.Add(barTabacchi);
-
-            //// Informazioni promozione
-            //TextBlock promoInfo = new TextBlock
-            //{
-            //    Text = "Ogni pizza acquistata vale 1 punto.\n" +
-            //           "Ogni 10 punti una pizza margherita\n" +
-            //           "(promazione valida da mercoledì a venerdì)",
-            //    FontSize = 12,
-            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    TextAlignment = TextAlignment.Center,
-            //    LineHeight = 18,
-            //    Margin = new Thickness(0, 10, 0, 0) // Sposta in basso di 10 pixel
-            //};
-            ////contactInfo.Children.Add(promoInfo);
-
-            //// Numero di telefono evidenziato
-            //TextBlock phoneNumber = new TextBlock
-            //{
-            //    Text = "Tel. 035 904800",
-            //    FontSize = 20,
-            //    FontWeight = FontWeights.Bold,
-            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    Margin = new Thickness(0, 10, 0, 10)
-            //};
-            //contactInfo.Children.Add(phoneNumber);
-
-            // Informazioni aggiuntive
-            //TextBlock additionalInfo = new TextBlock
-            //{
-            //    Text = "Pizza con farina integrale\n" +
-            //           "Vendita vino sfuso D.O.P. € 2,20/litro",
-            //    FontSize = 12,
-            //    Foreground = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso
-            //    HorizontalAlignment = HorizontalAlignment.Center,
-            //    TextAlignment = TextAlignment.Center,
-            //    LineHeight = 18
-            //};
-            //contactInfo.Children.Add(additionalInfo);
-
-            //contactBorder.Child = contactInfo;
-            //Grid.SetColumn(contactBorder, 1);
-            //headerGrid.Children.Add(contactBorder);
-
             Grid.SetRow(headerGrid, 0);
             mainGrid.Children.Add(headerGrid);
         }
@@ -725,6 +656,19 @@ namespace MariEMontiRandomPizza
             try
             {
                 var player = new SoundPlayer("Resources/game_win_success.wav");
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Errore durante la riproduzione del suono: {ex.Message}");
+            }
+        }
+
+        private void PlaySpinSound()
+        {
+            try
+            {
+                var player = new SoundPlayer("Resources/classic-slot-machine.wav");
                 player.Play();
             }
             catch (Exception ex)

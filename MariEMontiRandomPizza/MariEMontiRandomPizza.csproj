@@ -11,10 +11,14 @@
 
   <ItemGroup>
     <None Remove="Images\MariEmontiIcon.ico" />
+    <None Remove="Resources\classic-slot-machine.wav" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Images\MariEmontiIcon.ico" />
+    <Content Include="Resources\classic-slot-machine.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\game_win_success.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
