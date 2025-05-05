@@ -5,6 +5,7 @@ using System.Linq;
 using System.Media;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -18,6 +19,9 @@ namespace MariEMontiRandomPizza
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Border cartIconBorder;
+        private TextBlock cartCountText;
+
         private List<Pizza> pizzaMenu = new List<Pizza>();
         private Random random = new Random();
         private Pizza selectedPizza = null;
@@ -287,6 +291,9 @@ namespace MariEMontiRandomPizza
             Grid.SetRow(footerText, 2);
             mainGrid.Children.Add(footerText);
 
+            // Aggiungi l'icona del carrello
+            AddCartIcon(mainGrid);
+
             // Set the content of the window
             this.Content = mainGrid;
 
@@ -357,6 +364,8 @@ namespace MariEMontiRandomPizza
                 }
             }
 
+            AddRandomPizzaToCart();
+
             // Riabilita il bottone dopo un breve ritardo
             DispatcherTimer enableButtonTimer = new DispatcherTimer();
             enableButtonTimer.Interval = TimeSpan.FromSeconds(4);
@@ -407,7 +416,6 @@ namespace MariEMontiRandomPizza
 
                 // Esegui la dissolvenza con rivelazione carattere per carattere
                 RevealTextCharByChar();
-                App.Cart.AddToCart(selectedPizza);
             }
             else
             {
@@ -749,6 +757,137 @@ namespace MariEMontiRandomPizza
                 winSoundPlayer.Dispose();
                 winSoundPlayer = null;
             }
+        }
+        private void AddCartIcon(Grid mainGrid)
+        {
+            // Crea un bordo per l'icona del carrello
+            cartIconBorder = new Border
+            {
+                Width = 60,
+                Height = 60,
+                Background = new SolidColorBrush(Colors.White), // Interno bianco
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)), // Bordo blu
+                BorderThickness = new Thickness(2), // Spessore bordo
+                CornerRadius = new CornerRadius(30), // Cerchio
+                Margin = new Thickness(0, 0, 20, 20),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Padding = new Thickness(5),
+                Cursor = Cursors.Hand
+            };
+
+            // Effetto ombra per il bordo
+            cartIconBorder.Effect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = Colors.Gray,
+                Direction = 270,
+                ShadowDepth = 3,
+                BlurRadius = 5,
+                Opacity = 0.6
+            };
+
+            // Pannello per contenere l'icona e il contatore
+            Grid cartIconGrid = new Grid();
+
+            // Crea l'icona del carrello
+            Image cartIcon = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-cart-32.png")),
+                Width = 29,
+                Height = 29,
+                Margin = new Thickness(0, 0, 5, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            cartIconGrid.Children.Add(cartIcon);
+
+            // Crea il testo per il contatore
+            cartCountText = new TextBlock
+            {
+                Text = "0",
+                FontSize = 16,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Colors.White),
+                Background = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel logo
+                Width = 24,
+                Height = 24,
+                TextAlignment = TextAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, -5, -5, 0)
+            };
+
+            // Aggiungi un bordo rotondo al contatore
+            Border countBorder = new Border
+            {
+                CornerRadius = new CornerRadius(12),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, -5, -5, 0),
+                Background = new SolidColorBrush(Color.FromRgb(220, 50, 50)), // Rosso come nel logo
+                Child = cartCountText
+            };
+            cartIconGrid.Children.Add(countBorder);
+
+            cartIconBorder.Child = cartIconGrid;
+
+            // Aggiungi il gestore eventi per il click
+            cartIconBorder.MouseLeftButtonDown += CartIcon_Click;
+
+            // Aggiungi il bordo dell'icona del carrello al grid principale
+            Grid.SetRow(cartIconBorder, 1); // Posizionalo nella riga del contenuto
+            mainGrid.Children.Add(cartIconBorder);
+
+            // Aggiorna il contatore del carrello iniziale
+            UpdateCartCounter();
+        }
+
+        // Metodo che gestisce il click sull'icona del carrello
+        private void CartIcon_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Apri la finestra del menu
+            MenuWindow menuWindow = new MenuWindow(pizzaMenu);
+            menuWindow.Owner = this;
+            menuWindow.ShowDialog();
+        }
+
+        // Metodo per aggiornare il contatore del carrello
+        public void UpdateCartCounter()
+        {
+            // Calcola il numero totale di pizze nel carrello
+            int totalItems = 0;
+            foreach (var item in App.Cart)
+            {
+                totalItems += item.Value;
+            }
+
+            // Aggiorna il testo del contatore
+            cartCountText.Text = totalItems.ToString();
+
+            // Nascondi il contatore se è vuoto
+            if (totalItems == 0)
+            {
+                cartCountText.Visibility = Visibility.Collapsed;
+                ((Border)cartCountText.Parent).Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                cartCountText.Visibility = Visibility.Visible;
+                ((Border)cartCountText.Parent).Visibility = Visibility.Visible;
+            }
+        }
+        private void AddRandomPizzaToCart()
+        {
+            App.Cart.AddToCart(selectedPizza);
+
+            DispatcherTimer updateCartTimer = new DispatcherTimer();
+            updateCartTimer.Interval = TimeSpan.FromSeconds(3.5); // Aggiorna poco prima della riabilitazione del bottone
+            updateCartTimer.Tick += (s, args) =>
+            {
+                UpdateCartCounter();
+                updateCartTimer.Stop();
+            };
+            updateCartTimer.Start();
         }
     }
 }

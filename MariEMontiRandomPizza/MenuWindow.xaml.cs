@@ -406,7 +406,6 @@ namespace MariEMontiRandomPizza
                 Orientation = Orientation.Horizontal
             };
 
-            // Cart icon using Path
             Image cartIcon = new Image
             {
                 Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-cart-32.png")),
@@ -964,6 +963,11 @@ namespace MariEMontiRandomPizza
             // Update summary info
             _cartItemCountText.Text = $"Carrello ({totalItems} {(totalItems == 1 ? "pizza" : "pizze")})";
             _cartTotalText.Text = $"Totale: € {totalPrice:F2}";
+
+
+            //Update Main window cart
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow?.UpdateCartCounter();
         }
 
         private void DecrementQuantity(Pizza pizza)
