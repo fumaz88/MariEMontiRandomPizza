@@ -392,11 +392,17 @@ namespace MariEMontiRandomPizza
             if (_typeComboBox.SelectedIndex > 0)
             {
                 string selectedType = (string)_typeComboBox.SelectedItem;
+
                 if (selectedType == "Pizza")
                 {
                     _filteredPizzas = _filteredPizzas.Where(p => !p.Name.ToLower().Contains("calzone") && !p.Name.ToLower().Contains("bianca")).ToList();
                 }
-                else
+                else if (selectedType == "Calzone")
+                {
+                    _filteredPizzas = _filteredPizzas.Where(p => p.Name.ToLower().Contains(selectedType.ToLower()) ||
+                                                              p.Ingredients.ToLower().Contains(selectedType.ToLower())).ToList();
+                }
+                else if (selectedType == "Pizza Bianca")
                 {
                     _filteredPizzas = _filteredPizzas.Where(p => p.Name.ToLower().Contains(selectedType.ToLower()) ||
                                                               p.Ingredients.ToLower().Contains(selectedType.ToLower())
