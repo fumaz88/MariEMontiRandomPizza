@@ -25,4 +25,14 @@
     <Resource Include="Resources\*.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="PizzaManagerWindow.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="menu-pizze.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
