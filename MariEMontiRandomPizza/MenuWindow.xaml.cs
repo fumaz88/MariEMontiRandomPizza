@@ -378,6 +378,12 @@ namespace MariEMontiRandomPizza
                     _cartSummaryBorder.Visibility = Visibility.Visible;
                 }
 
+                // Expand the cart when cart is not empty
+                if (App.Cart.Count > 0)
+                {
+                    _cartExpander.IsExpanded = true;
+                }
+
                 UpdateCartUI();
             }
         }
@@ -458,7 +464,7 @@ namespace MariEMontiRandomPizza
             StackPanel cartButtonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Right,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 5, 5, 0)
             };
 

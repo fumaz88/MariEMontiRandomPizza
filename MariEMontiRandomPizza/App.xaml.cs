@@ -17,9 +17,9 @@ namespace MariEMontiRandomPizza
     {
         public static void AddToCart(this Dictionary<Pizza, int> cart, Pizza pizza)
         {
-            if (cart.ContainsKey(pizza))
+            if (cart.TryGetValue(pizza, out int value))
             {
-                cart[pizza]++;
+                cart[pizza] = ++value;
             }
             else
             {
@@ -27,5 +27,4 @@ namespace MariEMontiRandomPizza
             }
         }
     }
-
 }
