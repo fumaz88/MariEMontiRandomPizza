@@ -173,6 +173,18 @@ namespace MariEMontiRandomPizza
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
+            // Cart icon using Path
+            Image slotMachineIcon = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-slot-machine-100.png")),
+                Width = 65,
+                Height = 65,
+                Margin = new Thickness(0, 0, 5, 10),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            selectionPanel.Children.Add(slotMachineIcon);
+
             // Add click events to the buttons
             randomButton.Click += RandomButton_Click;
             menuButton.Click += MenuButton_Click;
@@ -255,7 +267,7 @@ namespace MariEMontiRandomPizza
                 Source = new BitmapImage(new Uri("pack://application:,,,/Images/icons8-kawaii-pizza-80.png")),
                 Width = 65,
                 Height = 65,
-                Margin = new Thickness(0, 0, 5, 0),
+                Margin = new Thickness(0, 0, 5, 10),
                 VerticalAlignment = VerticalAlignment.Center
             };
 

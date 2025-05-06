@@ -13,6 +13,7 @@
     <None Remove="Images\cart-shopping-solid.png" />
     <None Remove="Images\icons8-cart-32.png" />
     <None Remove="Images\icons8-kawaii-pizza-80.png" />
+    <None Remove="Images\icons8-slot-machine-100.png" />
     <None Remove="Images\MariEmontiIcon.ico" />
     <None Remove="Resources\classic-slot-machine.wav" />
   </ItemGroup>
@@ -28,6 +29,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\MariEmontiIcon.ico" />
+    <Resource Include="Images\icons8-slot-machine-100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Resources\classic-slot-machine.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -60,11 +60,12 @@ namespace MariEMontiRandomPizza
             Grid mainGrid = new Grid();
             mainGrid.Background = new SolidColorBrush(Color.FromRgb(240, 245, 255)); // Light blue background
 
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(80) }); // Header
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(120) }); // Filter options
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Content
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) }); // Footer
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Cart summary
+            // Modifica della struttura delle righe del Grid principale
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(80) }); // Header (Row 0)
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(120) }); // Filter options (Row 1)
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }); // Content (Row 2)
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Cart summary (Row 3)
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) }); // Footer (Row 4)
 
             // Create header
             Border headerBorder = new Border
@@ -328,15 +329,17 @@ namespace MariEMontiRandomPizza
                 BorderBrush = new SolidColorBrush(Color.FromRgb(200, 200, 200))
             };
 
+
             StackPanel footerPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Right
             };
 
             _pizzaCountText = new TextBlock
             {
                 VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(10),
                 FontWeight = FontWeights.Bold,
                 Text = $"Pizze visualizzate: {_filteredPizzas.Count} / {_allPizzas.Count}"
@@ -358,10 +361,11 @@ namespace MariEMontiRandomPizza
             footerPanel.Children.Add(closeButton);
             footerBorder.Child = footerPanel;
 
-            Grid.SetRow(footerBorder, 3);
+            // Posizionamento del footer nell'ultima riga del Grid (Row 4)
+            Grid.SetRow(footerBorder, 4);
             mainGrid.Children.Add(footerBorder);
 
-            // Create cart summary section
+            // Create cart summary section prima del footer
             CreateCartSummary(mainGrid);
 
             // Set the content of the window
@@ -397,7 +401,6 @@ namespace MariEMontiRandomPizza
                 BorderThickness = new Thickness(0, 1, 0, 0),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204)),
                 Padding = new Thickness(5)
-                // Rimosso MaxHeight per evitare limitazioni
             };
 
             _cartExpander = new Expander
@@ -464,7 +467,7 @@ namespace MariEMontiRandomPizza
             StackPanel cartButtonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 5, 5, 0)
             };
 
@@ -490,7 +493,9 @@ namespace MariEMontiRandomPizza
             cartContainer.Children.Add(cartButtonPanel);  // Aggiunto dopo l'expander
 
             _cartSummaryBorder.Child = cartContainer;
-            Grid.SetRow(_cartSummaryBorder, 4);
+
+            // Posizionamento del carrello nella riga 3, sopra il footer
+            Grid.SetRow(_cartSummaryBorder, 3);
             mainGrid.Children.Add(_cartSummaryBorder);
 
             // Initially hide cart if empty
